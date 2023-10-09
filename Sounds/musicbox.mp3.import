@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/musicbox.mp3-7de303df834c5948c012ee9c3e838184.mp3str"
+
+[deps]
+
+source_file="res://Sounds/musicbox.mp3"
+dest_files=[ "res://.import/musicbox.mp3-7de303df834c5948c012ee9c3e838184.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

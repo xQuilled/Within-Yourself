@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/horror_loop.WAV-7e06cf20ebdc3f3baebaf6c6b699fdce.sample"
+
+[deps]
+
+source_file="res://Sounds/horror_loop.WAV"
+dest_files=[ "res://.import/horror_loop.WAV-7e06cf20ebdc3f3baebaf6c6b699fdce.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=true
+compress/mode=0

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Glitch Fade.wav-92ffc1d2ddc192f6e4df5c36190ac4ae.sample"
+
+[deps]
+
+source_file="res://Sounds/Glitch Fade.wav"
+dest_files=[ "res://.import/Glitch Fade.wav-92ffc1d2ddc192f6e4df5c36190ac4ae.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

@@ -1,0 +1,144 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Materials/Rust/Rust.tres" type="Material" id=1]
+[ext_resource path="res://Models/Gate/Gate.gd" type="Script" id=2]
+[ext_resource path="res://Sounds/gate.wav" type="AudioStream" id=3]
+
+[sub_resource type="CubeMesh" id=1]
+size = Vector3( 0.02, 4, 0.2 )
+
+[sub_resource type="CylinderMesh" id=2]
+top_radius = 0.05
+bottom_radius = 0.05
+height = 2.6
+
+[sub_resource type="BoxShape" id=3]
+extents = Vector3( 1.3, 2, 0.08 )
+
+[sub_resource type="Animation" id=4]
+resource_name = "open"
+length = 17.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sound:playing")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 6.9 ),
+"transitions": PoolRealArray( 1 ),
+"values": [ {
+"args": [  ],
+"method": "summon"
+} ]
+}
+tracks/2/type = "bezier"
+tracks/2/path = NodePath("Gate:translation:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"points": PoolRealArray( 0, -0.25, 0, 3.625, 0.00670695, 2.6, -1.34359, -0.0109165, 0.25, 0 ),
+"times": PoolRealArray( 0, 15.3 )
+}
+
+[node name="Gate" type="Spatial"]
+script = ExtResource( 2 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.01, 2, 0 )
+mesh = SubResource( 1 )
+material/0 = ExtResource( 1 )
+
+[node name="Gate" type="StaticBody" parent="."]
+
+[node name="Pole1" type="MeshInstance" parent="Gate"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -1.3, 0.1, 0 )
+mesh = SubResource( 2 )
+material/0 = ExtResource( 1 )
+
+[node name="Pole2" type="MeshInstance" parent="Gate"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -1.3, 0.4, 0 )
+mesh = SubResource( 2 )
+material/0 = ExtResource( 1 )
+
+[node name="Pole3" type="MeshInstance" parent="Gate"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -1.3, 0.7, 0 )
+mesh = SubResource( 2 )
+material/0 = ExtResource( 1 )
+
+[node name="Pole4" type="MeshInstance" parent="Gate"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -1.3, 1, 0 )
+mesh = SubResource( 2 )
+material/0 = ExtResource( 1 )
+
+[node name="Pole5" type="MeshInstance" parent="Gate"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -1.3, 1.3, 0 )
+mesh = SubResource( 2 )
+material/0 = ExtResource( 1 )
+
+[node name="Pole6" type="MeshInstance" parent="Gate"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -1.3, 1.6, 0 )
+mesh = SubResource( 2 )
+material/0 = ExtResource( 1 )
+
+[node name="Pole7" type="MeshInstance" parent="Gate"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -1.3, 1.9, 0 )
+mesh = SubResource( 2 )
+material/0 = ExtResource( 1 )
+
+[node name="Pole8" type="MeshInstance" parent="Gate"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -1.3, 2.2, 0 )
+mesh = SubResource( 2 )
+material/0 = ExtResource( 1 )
+
+[node name="Pole9" type="MeshInstance" parent="Gate"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -1.3, 2.5, 0 )
+mesh = SubResource( 2 )
+material/0 = ExtResource( 1 )
+
+[node name="Pole10" type="MeshInstance" parent="Gate"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -1.3, 2.8, 0 )
+mesh = SubResource( 2 )
+material/0 = ExtResource( 1 )
+
+[node name="Pole11" type="MeshInstance" parent="Gate"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -1.3, 3.1, 0 )
+mesh = SubResource( 2 )
+material/0 = ExtResource( 1 )
+
+[node name="Pole12" type="MeshInstance" parent="Gate"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -1.3, 3.4, 0 )
+mesh = SubResource( 2 )
+material/0 = ExtResource( 1 )
+
+[node name="Pole13" type="MeshInstance" parent="Gate"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -1.3, 3.7, 0 )
+mesh = SubResource( 2 )
+material/0 = ExtResource( 1 )
+
+[node name="CollisionShape" type="CollisionShape" parent="Gate"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3, 2, 0 )
+shape = SubResource( 3 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/open = SubResource( 4 )
+
+[node name="Sound" type="AudioStreamPlayer3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 2, 0.02 )
+stream = ExtResource( 3 )
+unit_size = 3.0
+bus = "Reverb"

@@ -1,0 +1,20 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/10233_Kitchen_Table_v2_max2011_it2.obj-20219c331dea28b695e895f76f16d48a.mesh"
+
+[deps]
+
+files=[ "res://.import/10233_Kitchen_Table_v2_max2011_it2.obj-20219c331dea28b695e895f76f16d48a.mesh" ]
+
+source_file="res://Models/Table/10233_Kitchen_Table_v2_max2011_it2.obj"
+dest_files=[ "res://.import/10233_Kitchen_Table_v2_max2011_it2.obj-20219c331dea28b695e895f76f16d48a.mesh", "res://.import/10233_Kitchen_Table_v2_max2011_it2.obj-20219c331dea28b695e895f76f16d48a.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+octahedral_compression=true
+optimize_mesh_flags=4286

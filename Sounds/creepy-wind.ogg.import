@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/creepy-wind.ogg-79385da6cfb25ff058116f19ea2a6bcf.oggstr"
+
+[deps]
+
+source_file="res://Sounds/creepy-wind.ogg"
+dest_files=[ "res://.import/creepy-wind.ogg-79385da6cfb25ff058116f19ea2a6bcf.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

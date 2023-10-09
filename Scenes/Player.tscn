@@ -1,0 +1,808 @@
+[gd_scene load_steps=39 format=2]
+
+[ext_resource path="res://Scripts/Player.gd" type="Script" id=1]
+[ext_resource path="res://motion_blur/motion_blur.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/randomAudioStreamPlayer/random_audio_stream_player.gd" type="Script" id=3]
+[ext_resource path="res://Sounds/Footsteps/step-05.wav" type="AudioStream" id=4]
+[ext_resource path="res://Sounds/Footsteps/step-06.wav" type="AudioStream" id=5]
+[ext_resource path="res://Sounds/Footsteps/step-02.wav" type="AudioStream" id=6]
+[ext_resource path="res://Sounds/Footsteps/step-04.wav" type="AudioStream" id=7]
+[ext_resource path="res://Sounds/Footsteps/step-01.wav" type="AudioStream" id=8]
+[ext_resource path="res://Sounds/Footsteps/step-03.wav" type="AudioStream" id=9]
+[ext_resource path="res://Sounds/flashlight.wav" type="AudioStream" id=10]
+[ext_resource path="res://Scripts/Camera.gd" type="Script" id=11]
+[ext_resource path="res://Sounds/jumpscare.wav" type="AudioStream" id=12]
+[ext_resource path="res://Other/Hack-Regular.ttf" type="DynamicFontData" id=13]
+[ext_resource path="res://Sounds/noisebrown.ogg" type="AudioStream" id=14]
+[ext_resource path="res://Sounds/Glitch Hiss.wav" type="AudioStream" id=15]
+[ext_resource path="res://Sounds/rising-suspense.mp3" type="AudioStream" id=16]
+[ext_resource path="res://Other/paper.png" type="Texture" id=17]
+[ext_resource path="res://Sounds/noisepink.ogg" type="AudioStream" id=18]
+[ext_resource path="res://Other/eyes.jpg" type="Texture" id=19]
+[ext_resource path="res://Sounds/horror_danger_loop.WAV" type="AudioStream" id=20]
+
+[sub_resource type="CylinderShape" id=33]
+radius = 0.5
+height = 2.5
+
+[sub_resource type="OpenSimplexNoise" id=14]
+
+[sub_resource type="Animation" id=2]
+resource_name = "idle"
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:rotation_degrees")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=3]
+resource_name = "walking"
+length = 1.2
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:rotation_degrees")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.3, 0.6, 0.9 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 1, 0, -1 ), Vector3( -1, 0, 0 ), Vector3( 1, 0, 1 ), Vector3( -1, 0, 0 ) ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath("../../..")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.6 ),
+"transitions": PoolRealArray( 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "step"
+}, {
+"args": [  ],
+"method": "step"
+} ]
+}
+
+[sub_resource type="AnimationNodeAnimation" id=4]
+animation = "idle"
+
+[sub_resource type="AnimationNodeAnimation" id=5]
+animation = "walking"
+
+[sub_resource type="AnimationNodeBlendSpace1D" id=6]
+
+[sub_resource type="AnimationNodeBlendSpace1D" id=7]
+blend_point_0/node = SubResource( 4 )
+blend_point_0/pos = 0.4
+blend_point_1/node = SubResource( 5 )
+blend_point_1/pos = 1.0
+blend_point_2/node = SubResource( 6 )
+blend_point_2/pos = 0.0
+
+[sub_resource type="DynamicFont" id=17]
+size = 128
+font_data = ExtResource( 13 )
+
+[sub_resource type="Shader" id=34]
+code = "shader_type canvas_item;
+//inputs
+uniform float AMT = 0.7; //0 - 1 glitch amount
+uniform float SPEED = 0.6; //0 - 1 speed
+
+//2D (returns 0 - 1)
+float random2d(vec2 n) { 
+    return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
+}
+
+float randomRange (in vec2 seed, in float min, in float max) {
+		return min + random2d(seed) * (max - min);
+}
+
+// return 1 if v inside 1d range
+float insideRange(float v, float bottom, float top) {
+   return step(bottom, v) - step(top, v);
+}
+
+
+   
+void fragment()
+{
+  float time = floor(TIME * SPEED * 60.0);    
+	vec2 uv = SCREEN_UV;//fragCoord.xy / iResolution.xy;
+    
+    //copy orig
+    vec3 outCol = texture(SCREEN_TEXTURE, uv).rgb;
+    
+    //randomly offset slices horizontally
+    float maxOffset = AMT/2.0;
+    for (float i = 0.0; i < 10.0 * AMT; i += 1.0) {
+        float sliceY = random2d(vec2(time , 2345.0 + float(i)));
+        float sliceH = random2d(vec2(time , 9035.0 + float(i))) * 0.25;
+        float hOffset = randomRange(vec2(time , 9625.0 + float(i)), -maxOffset, maxOffset);
+        vec2 uvOff = uv;
+        uvOff.x += hOffset;
+        if (insideRange(uv.y, sliceY, fract(sliceY+sliceH)) == 1.0 ){
+        	outCol = texture(SCREEN_TEXTURE, uvOff).rgb;
+        }
+    }
+    
+    //do slight offset on one entire channel
+    float maxColOffset = AMT/6.0;
+    float rnd = random2d(vec2(time , 9545.0));
+    vec2 colOffset = vec2(randomRange(vec2(time , 9545.0),-maxColOffset,maxColOffset), 
+                       randomRange(vec2(time , 7205.0),-maxColOffset,maxColOffset));
+    if (rnd < 0.33){
+        outCol.r = texture(SCREEN_TEXTURE, uv + colOffset).r;
+        
+    }else if (rnd < 0.66){
+        outCol.g = texture(SCREEN_TEXTURE, uv + colOffset).g;
+        
+    } else{
+        outCol.b = texture(SCREEN_TEXTURE, uv + colOffset).b;  
+    }
+       
+	COLOR = vec4(outCol,1.0);
+}"
+
+[sub_resource type="ShaderMaterial" id=11]
+shader = SubResource( 34 )
+shader_param/AMT = 0.2
+shader_param/SPEED = 0.6
+
+[sub_resource type="Shader" id=8]
+code = "/*
+Godot 3 2D CRT Shader.
+A 2D shader for Godot 3 simulating a CRT..
+Author: hiulit
+Repository: https://github.com/hiulit/Godot-3-2D-CRT-Shader
+Issues: https://github.com/hiulit/Godot-3-2D-CRT-Shader/issues
+License: MIT https://github.com/hiulit/Godot-3-2D-CRT-Shader/blob/master/LICENSE
+*/
+
+shader_type canvas_item;
+
+const float PI = 3.14159265359;
+
+uniform vec2 screen_size = vec2(320.0, 180.0);
+uniform bool show_curvature = true;
+uniform float curvature_x_amount : hint_range(3.0, 15.0, 0.01) = float(6.0); 
+uniform float curvature_y_amount : hint_range(3.0, 15.0, 0.01) = float(4.0);
+uniform vec4 corner_color : hint_color = vec4(0.0, 0.0, 0.0, 1.0);
+uniform bool show_vignette = true;
+uniform float vignette_opacity : hint_range(0.0, 1.0, 0.01) = 0.2;
+uniform bool show_horizontal_scan_lines = true;
+uniform float horizontal_scan_lines_amount : hint_range(0.0, 180.0, 0.1) = 180.0;
+uniform float horizontal_scan_lines_opacity : hint_range(0.0, 1.0, 0.01) = 1.0;
+uniform bool show_vertical_scan_lines = false;
+uniform float vertical_scan_lines_amount : hint_range(0.0, 320.0, 0.1) = 320.0;
+uniform float vertical_scan_lines_opacity : hint_range(0.0, 1.0, 0.01) = 1.0;
+uniform float boost : hint_range(1.0, 2.0, 0.01) = 1.2;
+uniform float aberration_amount : hint_range(0.0, 30.0, 0.01) = 0.0;
+
+vec2 uv_curve(vec2 uv) {
+	if (show_curvature) {
+		uv = uv * 2.0 - 1.0;
+		vec2 offset = abs(uv.yx) / vec2(curvature_x_amount, curvature_y_amount);
+		uv = uv + uv * offset * offset;
+		uv = uv * 0.5 + 0.5;
+	}
+
+	return uv;
+}
+
+
+void fragment() {
+	vec2 uv = uv_curve(UV);
+	vec2 screen_uv = uv_curve(SCREEN_UV);
+	vec3 color = texture(SCREEN_TEXTURE, screen_uv).rgb;
+
+	if (aberration_amount > 0.0) {
+		float adjusted_amount = aberration_amount / screen_size.x;
+		color.r = texture(SCREEN_TEXTURE, vec2(screen_uv.x + adjusted_amount, screen_uv.y)).r;
+		color.g = texture(SCREEN_TEXTURE, screen_uv).g;
+		color.b = texture(SCREEN_TEXTURE, vec2(screen_uv.x - adjusted_amount, screen_uv.y)).b;
+	}
+
+	if (show_vignette) {
+		float vignette = uv.x * uv.y * (1.0 - uv.x) * (1.0 - uv.y);
+		vignette = clamp(pow((screen_size.x / 4.0) * vignette, vignette_opacity), 0.0, 1.0);
+		color *= vignette;
+	}
+
+	if (show_horizontal_scan_lines) {
+		float s = sin(screen_uv.y * horizontal_scan_lines_amount * PI * 2.0);
+		s = (s * 0.5 + 0.5) * 0.9 + 0.1;
+		vec4 scan_line = vec4(vec3(pow(s, horizontal_scan_lines_opacity)), 1.0);
+		color *= scan_line.rgb;
+	}
+
+	if (show_vertical_scan_lines) {
+		float s = sin(screen_uv.x * vertical_scan_lines_amount * PI * 2.0);
+		s = (s * 0.5 + 0.5) * 0.9 + 0.1;
+		vec4 scan_line = vec4(vec3(pow(s, vertical_scan_lines_opacity)), 1.0);
+		color *= scan_line.rgb;
+	}
+
+	if (show_horizontal_scan_lines || show_vertical_scan_lines) {
+		color *= boost;
+	}
+
+	// Fill the blank space of the corners, left by the curvature, with black.
+	if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
+		color = corner_color.rgb;
+	}
+
+	COLOR = vec4(color, 1.0);
+}"
+
+[sub_resource type="ShaderMaterial" id=9]
+shader = SubResource( 8 )
+shader_param/screen_size = Vector2( 320, 180 )
+shader_param/show_curvature = true
+shader_param/curvature_x_amount = 6.0
+shader_param/curvature_y_amount = 4.0
+shader_param/corner_color = Color( 0, 0, 0, 1 )
+shader_param/show_vignette = true
+shader_param/vignette_opacity = 0.2
+shader_param/show_horizontal_scan_lines = false
+shader_param/horizontal_scan_lines_amount = 180.0
+shader_param/horizontal_scan_lines_opacity = 1.0
+shader_param/show_vertical_scan_lines = false
+shader_param/vertical_scan_lines_amount = 320.0
+shader_param/vertical_scan_lines_opacity = 1.0
+shader_param/boost = 1.2
+shader_param/aberration_amount = 0.1
+
+[sub_resource type="Animation" id=12]
+resource_name = "fade"
+length = 0.5
+tracks/0/type = "bezier"
+tracks/0/path = NodePath("../CanvasLayer2/Fade:color:a")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PoolRealArray( 1, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0 ),
+"times": PoolRealArray( 0, 0.5 )
+}
+
+[sub_resource type="Animation" id=15]
+resource_name = "jumpscare"
+length = 2.0
+tracks/0/type = "bezier"
+tracks/0/path = NodePath("Head/HeadXRotation/Camera:fov")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"points": PoolRealArray( 70, -0.25, 0, 0.25, 0, 35, -0.25, 0, 0.25, 0 ),
+"times": PoolRealArray( 0, 0.3 )
+}
+tracks/1/type = "bezier"
+tracks/1/path = NodePath("CanvasLayer2/Fade:color:a")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"points": PoolRealArray( 0, -0.25, 0, 0.25, 0, 1, -0.25, 0, 0.25, 0 ),
+"times": PoolRealArray( 0.7, 0.72 )
+}
+
+[sub_resource type="Animation" id=18]
+resource_name = "dontlookaway"
+length = 1.4
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("CanvasLayer/Glitch:material:shader_param/AMT")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1.25, 1.3, 20, 20.05 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.2, 0.2, 0.0, 0.05, 0.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("CanvasLayer/Glitch:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.05, 1.25 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ false, true, false ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("CanvasLayer2/Cover:material:shader_param/aberration_amount")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.1 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("CanvasLayer2/Cover:material:shader_param/show_horizontal_scan_lines")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0, 0.05, 1.25 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ false, true, false ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("Glitch2:playing")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ true ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Glitch2:pitch_scale")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 1.0 ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("CanvasLayer2/Cover:material:shader_param/show_vertical_scan_lines")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 0, 0.05, 1.25 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ false, true, false ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("CanvasLayer/LabelCover/Label:text")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "DON'T LOOK AWAY" ]
+}
+
+[sub_resource type="Animation" id=16]
+resource_name = "stage1"
+length = 22.0
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("CanvasLayer/Glitch:material:shader_param/AMT")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1.5, 1.55, 2, 20, 20.05 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.2, 0.2, 0.0, 0.0, 0.05, 0.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Head/HeadXRotation/Camera:fov")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 1.5, 20 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 70.0, 70.0, 120.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("CanvasLayer/Glitch:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.05 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("CanvasLayer2/Cover:material:shader_param/aberration_amount")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0, 5, 5.05, 5.45, 5.5, 8.5, 8.55, 8.65, 8.7, 18, 18.05, 18.45, 18.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.1, 0.1, 20.0, 20.0, 0.1, 0.1, 20.0, 20.0, 0.1, 0.1, 20.0, 20.0, 0.1 ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("CanvasLayer2/Cover:material:shader_param/show_horizontal_scan_lines")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0, 0.05, 1.5, 5, 5.5, 8.5, 8.7, 18, 18.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ false, true, false, true, false, true, false, true, false ]
+}
+tracks/5/type = "value"
+tracks/5/path = NodePath("Glitch1:playing")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0, 0.05, 1.65, 2 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ false, true, false, false ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Glitch2:playing")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 5, 5.5, 8.5, 8.7, 18, 18.5 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ true, false, true, false, true, false ]
+}
+tracks/7/type = "value"
+tracks/7/path = NodePath("Rising:playing")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/keys = {
+"times": PoolRealArray( 0, 2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/8/type = "value"
+tracks/8/path = NodePath("Glitch2:pitch_scale")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/keys = {
+"times": PoolRealArray( 0, 8.2, 8.35, 16.9, 17.05 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 1.0, 1.0, 0.58, 0.58, 0.2 ]
+}
+tracks/9/type = "value"
+tracks/9/path = NodePath("CanvasLayer/LabelCover/Label:text")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "GO BACK" ]
+}
+
+[sub_resource type="Animation" id=35]
+resource_name = "stage3"
+length = 2.0
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("CanvasLayer/Glitch:material:shader_param/AMT")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1.5, 1.55 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.2, 0.2, 0.05 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("CanvasLayer/Glitch:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.05 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("Glitch1:playing")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.05, 1.65 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ false, true, false ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("CanvasLayer/LabelCover/Label:text")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "THE FINAL STRETCH" ]
+}
+tracks/4/type = "value"
+tracks/4/path = NodePath("DangerTheme:playing")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/keys = {
+"times": PoolRealArray( 0, 1.6 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ false, true ]
+}
+
+[node name="Player" type="KinematicBody"]
+script = ExtResource( 1 )
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+shape = SubResource( 33 )
+
+[node name="Head" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+
+[node name="HeadXRotation" type="Spatial" parent="Head"]
+
+[node name="Camera" type="Camera" parent="Head/HeadXRotation"]
+transform = Transform( 1, 3.4452e-05, 0, -3.4452e-05, 1, 6.42876e-05, 2.21484e-09, -6.42876e-05, 1, 0, 0, 0 )
+current = true
+script = ExtResource( 11 )
+noise = SubResource( 14 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Head/HeadXRotation/Camera"]
+anims/idle = SubResource( 2 )
+anims/walking = SubResource( 3 )
+
+[node name="AnimationTree" type="AnimationTree" parent="Head/HeadXRotation/Camera"]
+tree_root = SubResource( 7 )
+anim_player = NodePath("../AnimationPlayer")
+active = true
+parameters/blend_position = 0.40355
+parameters/2/blend_position = 0.0
+
+[node name="motion_blur" parent="Head/HeadXRotation/Camera" instance=ExtResource( 2 )]
+
+[node name="Cast" type="RayCast" parent="Head/HeadXRotation/Camera"]
+enabled = true
+cast_to = Vector3( 0, 0, -1 )
+
+[node name="JumpscareLocation" type="Position3D" parent="Head"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.110049, -3.22491, -0.484586 )
+
+[node name="JumpscareLight" type="OmniLight" parent="Head/JumpscareLocation"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.110049, 3.37422, -0.0785443 )
+light_color = Color( 1, 0.952941, 0.952941, 1 )
+light_energy = 0.0
+omni_range = 1.0
+
+[node name="Flashlight" type="Spatial" parent="."]
+transform = Transform( 0.999765, 0, 0.0216927, 0, 1, 0, -0.0216927, 0, 0.999765, 0, 1, 0 )
+
+[node name="SpotLight" type="SpotLight" parent="Flashlight"]
+transform = Transform( 0.990256, 0.000982663, 0.13925, 0.00649445, 0.998561, -0.053231, -0.139102, 0.0536167, 0.988825, 0.450688, -0.404007, -0.0178989 )
+light_energy = 2.0
+shadow_enabled = true
+shadow_color = Color( 0.254902, 0.254902, 0.254902, 1 )
+spot_range = 10.0
+spot_angle = 28.0
+spot_angle_attenuation = 0.25
+
+[node name="FlashlightSound" type="AudioStreamPlayer" parent="Flashlight"]
+stream = ExtResource( 10 )
+bus = "Reverb"
+
+[node name="FlashlightTimer" type="Timer" parent="Flashlight"]
+one_shot = true
+
+[node name="Hand" type="Spatial" parent="Flashlight"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.107, -0.111, -0.154 )
+
+[node name="Paper" type="Sprite3D" parent="Flashlight/Hand"]
+transform = Transform( 0.01, 0, 4.28408e-08, 0, 0.01, 0, -6.25732e-10, 0, 1, 0, 0, 0 )
+visible = false
+modulate = Color( 0.26, 0.26, 0.26, 1 )
+texture = ExtResource( 17 )
+
+[node name="Step" type="AudioStreamPlayer" parent="."]
+bus = "Reverb"
+script = ExtResource( 3 )
+samples = [ ExtResource( 8 ), ExtResource( 6 ), ExtResource( 9 ), ExtResource( 7 ), ExtResource( 4 ), ExtResource( 5 ) ]
+random_strategy = 1
+random_pitch_range = 0.1
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="LabelCover" type="ColorRect" parent="CanvasLayer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/LabelCover"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 19 )
+expand = true
+stretch_mode = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="CanvasLayer/LabelCover"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_fonts/font = SubResource( 17 )
+text = "DON'T LOOK AWAY"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Glitch" type="ColorRect" parent="CanvasLayer"]
+visible = false
+material = SubResource( 11 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Crosshair" type="ColorRect" parent="CanvasLayer"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -1.0
+margin_top = -1.0
+margin_right = 1.0
+margin_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="Cover" type="ColorRect" parent="CanvasLayer2"]
+material = SubResource( 9 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 1.0
+margin_right = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Anim" type="AnimationPlayer" parent="CanvasLayer2"]
+root_node = NodePath("../../CanvasLayer")
+anims/fade = SubResource( 12 )
+
+[node name="Fade" type="ColorRect" parent="CanvasLayer2"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="JumpscareSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 12 )
+volume_db = 7.0
+bus = "Reverb"
+
+[node name="Jumpscare" type="AnimationPlayer" parent="."]
+anims/jumpscare = SubResource( 15 )
+
+[node name="Stages" type="AnimationPlayer" parent="."]
+anims/dontlookaway = SubResource( 18 )
+anims/stage1 = SubResource( 16 )
+anims/stage3 = SubResource( 35 )
+
+[node name="Glitch1" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 14 )
+bus = "Reverb"
+
+[node name="Glitch2" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 15 )
+volume_db = -10.0
+bus = "Reverb"
+
+[node name="Rising" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 16 )
+volume_db = -10.0
+pitch_scale = 0.85
+bus = "Reverb"
+
+[node name="StageTimers" type="Node" parent="."]
+
+[node name="StageTimer" type="Timer" parent="StageTimers"]
+wait_time = 1.5
+one_shot = true
+
+[node name="StageTick" type="Timer" parent="StageTimers"]
+wait_time = 0.1
+
+[node name="NoisePink" type="AudioStreamPlayer" parent="StageTimers"]
+stream = ExtResource( 18 )
+
+[node name="VerifyStop" type="Timer" parent="StageTimers"]
+wait_time = 0.12
+one_shot = true
+
+[node name="DangerTheme" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 20 )
+volume_db = -10.0
+bus = "Reverb"
+
+[connection signal="animation_finished" from="Jumpscare" to="." method="_on_Jumpscare_animation_finished"]
+[connection signal="animation_finished" from="Stages" to="." method="_on_Stages_animation_finished"]
+[connection signal="timeout" from="StageTimers/StageTimer" to="." method="_on_Stage1Timer_timeout"]
+[connection signal="timeout" from="StageTimers/StageTick" to="." method="_on_Stage1Tick_timeout"]
+[connection signal="timeout" from="StageTimers/VerifyStop" to="." method="_on_VerifyStop_timeout"]

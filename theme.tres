@@ -1,0 +1,82 @@
+[gd_resource type="Theme" load_steps=15 format=2]
+
+[ext_resource path="res://Other/Hack-Regular.ttf" type="DynamicFontData" id=1]
+
+[sub_resource type="DynamicFont" id=2]
+size = 42
+extra_spacing_top = 4
+extra_spacing_bottom = 4
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxFlat" id=6]
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.592157, 0.403922, 0.266667, 0.537255 )
+shadow_color = Color( 1, 1, 1, 0.0666667 )
+shadow_size = 44
+
+[sub_resource type="StyleBoxFlat" id=4]
+bg_color = Color( 0, 0, 0, 0.784314 )
+border_width_left = 8
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0, 0, 0, 0.392157 )
+border_width_left = 4
+border_color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="StyleBoxFlat" id=5]
+bg_color = Color( 0.0901961, 0.054902, 0.054902, 0.662745 )
+border_width_left = 6
+border_color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="StyleBoxFlat" id=11]
+
+[sub_resource type="DynamicFont" id=7]
+size = 42
+extra_spacing_top = 5
+extra_spacing_bottom = 5
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=12]
+size = 42
+extra_spacing_top = 5
+extra_spacing_bottom = 5
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxFlat" id=13]
+bg_color = Color( 0, 0, 0, 0.392157 )
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0, 0, 0, 0.392157 )
+
+[sub_resource type="DynamicFont" id=8]
+size = 42
+extra_spacing_top = 5
+extra_spacing_bottom = 5
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxFlat" id=10]
+bg_color = Color( 0, 0, 0, 0.784314 )
+
+[sub_resource type="StyleBoxFlat" id=9]
+bg_color = Color( 0, 0, 0, 0.392157 )
+border_width_left = 6
+border_color = Color( 1, 1, 1, 1 )
+
+[resource]
+Button/fonts/font = SubResource( 2 )
+Button/styles/focus = SubResource( 6 )
+Button/styles/hover = SubResource( 4 )
+Button/styles/normal = SubResource( 3 )
+Button/styles/pressed = SubResource( 5 )
+HSlider/styles/grabber_area_highlight = SubResource( 11 )
+Label/fonts/font = SubResource( 7 )
+LineEdit/fonts/font = SubResource( 12 )
+LineEdit/styles/normal = SubResource( 13 )
+Panel/styles/panel = SubResource( 1 )
+PopupMenu/fonts/font = SubResource( 8 )
+PopupMenu/styles/hover = SubResource( 10 )
+PopupMenu/styles/panel = SubResource( 9 )
